@@ -6,27 +6,36 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.fbm.escape.R;
 import com.fbm.escape.busmessage.EventMsg;
+import com.fbm.escape.utils.PreferenceUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class BackgroundView extends ConstraintLayout {
+public class BackgroundView extends ConstraintLayout implements SensorEventListener {
     private static final String TAG = BackgroundView.class.getName();
 
     private Context context;
 
     private ViewGroup baseView;
+
+    private SensorManager sensorManager;
 
     public BackgroundView(Context context) {
         super(context);
@@ -56,6 +65,8 @@ public class BackgroundView extends ConstraintLayout {
 
         LayoutInflater.from(context).inflate(R.layout.view_main_background, this, true);
         baseView = findViewById(R.id.base_view);
+
+        sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
     }
 
     @Subscribe(threadMode = ThreadMode.POSTING, sticky = false)
@@ -92,8 +103,10 @@ public class BackgroundView extends ConstraintLayout {
         set.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                vibrator.vibrate(times, 1);
-                Log.i(TAG, "earthquake start");
+                if (PreferenceUtils.isVibratorOpen()) {
+                    vibrator.vibrate(times, 1);
+                    Log.i(TAG, "earthquake start");
+                }
             }
 
             @Override
@@ -106,4 +119,29 @@ public class BackgroundView extends ConstraintLayout {
     }
 
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        Log.i(TAG, "X=" + event.values[0] + " Y=" + event.values[1]);
+        for(int i=0;i<baseView.getChildCount();i++){
+
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    @Override
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+        Log.i(TAG, "onVisibilityChanged");
+        if(visibility==INVISIBLE){
+            Log.i(TAG, "unregisterListener");
+            sensorManager.unregisterListener(this);
+        }else {
+            Log.i(TAG, "registerListener");
+            Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
 }

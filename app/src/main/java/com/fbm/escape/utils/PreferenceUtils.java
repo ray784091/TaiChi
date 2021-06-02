@@ -14,23 +14,36 @@ public class PreferenceUtils {
 
     private static final String SP_KEY_BEST_SCORE = "best_score";
 
+    private static final String SP_KEY_VIBRATOR = "vibrator_open";
+
     private static SharedPreferences preference = getContext().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 
 
     public static int getBestScore() {
-       return preference.getInt(SP_KEY_BEST_SCORE,0);
+        return preference.getInt(SP_KEY_BEST_SCORE, 0);
     }
 
     /**
      * Save best score
+     *
      * @param score Score
      */
     public static void saveBestScore(int score) {
-        if(score>getBestScore()){
-            SharedPreferences.Editor editor=preference.edit();
-            editor.putInt(SP_KEY_BEST_SCORE,score);
+        if (score > getBestScore()) {
+            SharedPreferences.Editor editor = preference.edit();
+            editor.putInt(SP_KEY_BEST_SCORE, score);
             editor.apply();
         }
+    }
+
+    public static void saveVibratorState(boolean vibratorState) {
+        SharedPreferences.Editor editor = preference.edit();
+        editor.putBoolean(SP_KEY_VIBRATOR, vibratorState);
+        editor.apply();
+    }
+
+    public static boolean isVibratorOpen() {
+        return preference.getBoolean(SP_KEY_VIBRATOR, true);
     }
 
 }
