@@ -35,6 +35,7 @@ public abstract class CustomSurfaceView extends SurfaceView implements SurfaceHo
 
     public CustomSurfaceView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
         init(context);
     }
 
