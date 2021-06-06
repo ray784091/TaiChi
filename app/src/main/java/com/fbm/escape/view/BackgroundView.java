@@ -121,7 +121,6 @@ public class BackgroundView extends ConstraintLayout implements SensorEventListe
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        Log.i(TAG, "X=" + event.values[0] + " Y=" + event.values[1]);
         for(int i=0;i<baseView.getChildCount();i++){
 
         }
