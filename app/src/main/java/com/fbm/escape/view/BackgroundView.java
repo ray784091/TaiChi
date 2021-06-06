@@ -121,8 +121,9 @@ public class BackgroundView extends ConstraintLayout implements SensorEventListe
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        for(int i=0;i<baseView.getChildCount();i++){
-
+        for (int i = 0; i < baseView.getChildCount(); i++) {
+            Log.i("zl", "event" + event.values[2]);
+            baseView.getChildAt(i).setTranslationX((int)(0.5 * event.values[2] /i));
         }
     }
 
@@ -134,12 +135,12 @@ public class BackgroundView extends ConstraintLayout implements SensorEventListe
     @Override
     protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
         Log.i(TAG, "onVisibilityChanged");
-        if(visibility==INVISIBLE){
+        if (visibility == INVISIBLE) {
             Log.i(TAG, "unregisterListener");
             sensorManager.unregisterListener(this);
-        }else {
+        } else {
             Log.i(TAG, "registerListener");
-            Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
             sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
